@@ -1,0 +1,45 @@
+{% load static %}
+{% include 'chefheader.html' %}
+
+<main class="content">
+    <div class="container-fluid p-0">
+        <h1 class="h3 mb-3"><strong>Welcome, {{ chef.full_name }}</strong></h1>
+
+        <div class="row mt-3">
+            {% for chat in customer_chats %}
+                <div class="col-md-6 mb-3">
+                    <div class="card shadow-sm border rounded">
+                        <div class="card-body">
+                            <h5 class="card-title d-flex justify-content-between align-items-center">
+                                {{ chat.customer.name }}
+                                {% if chat.unread_count > 0 %}
+                                    <span class="badge bg-danger ms-2">{{ chat.unread_count }} new</span>
+                                {% endif %}
+                            </h5>
+                            {% if chat.last_message %}
+                                <p class="card-text">
+                                    <small>
+                                        <strong>{{ chat.last_message.sender|capfirst }}:</strong>
+                                        {{ chat.last_message.message|truncatechars:60 }}
+                                    </small><br>
+                                    <small class="text-muted">{{ chat.last_message.timestamp|date:"M d, H:i" }}</small>
+                                </p>
+                            {% else %}
+                                <p class="text-muted">No messages yet.</p>
+                            {% endif %}
+                            <a href="{% url 'homechef:chat_with_customer' chat.customer.id %}" class="btn btn-sm btn-primary">
+                                View Chat
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12">
+                    <p class="text-muted">No chats from customers yet.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</main>
+
+{% include 'cheffooter.html' %}

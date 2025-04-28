@@ -1,0 +1,39 @@
+{% load static %}
+{% include 'chefheader.html' %}
+
+<div class="container mt-5" style="max-width: 900px; padding: 30px; background: #ffffff; border-radius: 10px; box-shadow: 0px 4px 12px rgba(0,0,0,0.1);">
+    <h2 class="text-center mb-4" style="color: #333; font-weight: bold;">Approved Delivery Boys List</h2>
+
+    {% if approved_boys %}
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped" style="border-collapse: collapse; width: 100%;">
+                <thead class="table-light">
+                    <tr style="background-color: #f8f9fa; text-align: center;">
+                        <th style="padding: 10px; border: 1px solid #ddd;">Full Name</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">Phone</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">Email</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">Aadhaar Number</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">License Number</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">Availability Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for boy in approved_boys %}
+                    <tr style="text-align: center;">
+                        <td style="padding: 10px; border: 1px solid #ddd;">{{ boy.full_name }}</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">{{ boy.phone_number }}</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">{{ boy.email }}</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">{{ boy.aadhaar_number }}</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">{{ boy.license_number }}</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">{{ boy.availability_status }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-center" style="font-size: 1.2rem; color: #888;">No approved delivery boys found.</p>
+    {% endif %}
+</div>
+
+{% include 'cheffooter.html' %}

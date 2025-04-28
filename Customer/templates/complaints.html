@@ -1,0 +1,138 @@
+{% load static %}
+{% include 'customer_header.html' %}
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+    }
+
+    .complaint-container {
+        max-width: 600px;
+        background: white;
+        padding: 25px;
+        margin: 50px auto;
+        border-radius: 10px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    label {
+        font-weight: bold;
+        display: block;
+        margin-top: 10px;
+    }
+
+    input, select, textarea {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        margin-top: 20px;
+        background-color: #28a745;
+        border: none;
+        color: white;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    button:hover {
+        background-color: #218838;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    .spacer {
+        margin-top: 80px;
+        margin-bottom: 80px;
+    }
+</style>
+
+<div class="container spacer">
+    <h2>Submit a Complaint</h2>
+    <div class="complaint-container">
+        
+        <form method="post">
+            {% csrf_token %}
+
+            <label>Your Name:</label>
+            <input type="text" value="{{ customer.name }}" readonly>
+
+            <label>Your Email:</label>
+            <input type="email" value="{{ customer.email }}" readonly>
+
+            <label for="order">Select Order (Completed Orders Only):</label>
+            <select name="order" id="order" required onchange="fetchOrderDetails()">
+                <option value="">-- Select Completed Order --</option>
+                {% for order in orders %}
+                    <option value="{{ order.id }}">Order #{{ order.id }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Category:</label>
+            <select name="category" id="category" required>
+                <option value="">-- Select Category --</option>
+                <option value="homechef">Home Chef</option>
+                <option value="delivery boy">Delivery Boy</option>
+            </select>
+
+            <label>Complaint Details:</label>
+            <textarea name="complaint_text" rows="4" required></textarea>
+
+            <button type="submit">Submit Complaint</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function fetchOrderDetails() {
+        var orderId = document.getElementById("order").value;
+        if (!orderId) {
+            document.getElementById("homechef_section").classList.add("hidden");
+            document.getElementById("delivery_section").classList.add("hidden");
+            return;
+        }
+
+        fetch(/get-order-details/${orderId}/)
+            .then(response => response.json())
+            .then(data => {
+                if (data.home_chef) {
+                    document.getElementById("homechef_section").classList.remove("hidden");
+                    document.getElementById("home_chef_name").value = data.home_chef;
+                } else {
+                    document.getElementById("homechef_section").classList.add("hidden");
+                }
+
+                if (data.delivery_boy) {
+                    document.getElementById("delivery_section").classList.remove("hidden");
+                    document.getElementById("delivery_boy_name").value = data.delivery_boy;
+                } else {
+                    document.getElementById("delivery_section").classList.add("hidden");
+                }
+            })
+            .catch(error => console.error("Error fetching order details:", error));
+    }
+
+    document.getElementById("category").addEventListener("change", function() {
+        var selected = this.value;
+        document.getElementById("homechef_section").classList.toggle("hidden", selected !== "homechef");
+        document.getElementById("delivery_section").classList.toggle("hidden", selected !== "delivery boy");
+    });
+</script>
+
+{% include 'customer_footer.html' %}

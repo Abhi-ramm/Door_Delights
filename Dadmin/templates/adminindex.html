@@ -1,0 +1,48 @@
+{% include 'adminheader.html' %}
+
+<div class="container">
+    <div class="page-inner">
+        <!-- Dashboard Header -->
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h3 class="fw-bold mb-3">Dashboard</h3>
+                <h6 class="text-muted">Food Delivery Admin Panel</h6>
+            </div>
+            <div>
+                <a href="#" class="btn btn-info btn-round me-2">Manage</a>
+                <a href="#" class="btn btn-primary btn-round">Add Customer</a>
+            </div>
+        </div>
+
+        <!-- Dashboard Cards -->
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card shadow-sm p-3">
+                    <h6 class="text-muted">Total Orders</h6>
+                    <h3 class="fw-bold">1,234</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card shadow-sm p-3">
+                    <h6 class="text-muted">Revenue</h6>
+                    <h3 class="fw-bold">$12,345</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card shadow-sm p-3">
+                    <h6 class="text-muted">Active Users</h6>
+                    <h3 class="fw-bold">567</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card shadow-sm p-3">
+                    <h6 class="text-muted">Pending Deliveries</h6>
+                    <h3 class="fw-bold">34</h3>
+                </div>
+            </div>
+        </div>
+
+      </div>
+</div>
+
+{% include 'adminfooter.html' %}

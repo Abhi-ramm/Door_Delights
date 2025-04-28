@@ -1,0 +1,100 @@
+{% load static %}
+{% include 'adminheader.html' %}
+    
+    <title>Delivery Boys List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            text-align: center;
+        }
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+        th {
+            background: #007bff;
+            color: white;
+        }
+        .btn {
+            padding: 5px 10px;
+            text-decoration: none;
+            color: white;
+            border-radius: 3px;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+        }
+        .approve { background: green; }
+        .reject { background: red; }
+    </style>
+</head>
+<body>
+
+    <h2>Delivery Boys Management</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Photo</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Aadhaar Number</th>
+                <th>License Number</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for boy in delivery_boys %}
+            <tr>
+                <td>
+                    {% if boy.photo %}
+                        <img src="{{ boy.photo.url }}" alt="Photo" width="50">
+                    {% else %}
+                        No Photo
+                    {% endif %}
+                </td>
+                <td>{{ boy.full_name }}</td>
+                <td>{{ boy.email }}</td>
+                
+                <!-- Display Aadhaar and License Numbers -->
+                <td>{{ boy.aadhaar_number }}</td>
+                <td>{{ boy.license_number }}</td>
+                
+                <!-- Status with Conditional Badge -->
+                <td>
+                    {% if boy.status == "approved" %}
+                        <span style="color: white; background: green; padding: 5px 10px; border-radius: 5px;">Approved</span>
+                    {% else %}
+                        <span style="color: white; background: red; padding: 5px 10px; border-radius: 5px;">{{ boy.status|title }}</span>
+                    {% endif %}
+                </td>
+                
+                <td>
+                    {% if boy.status != "approved" %}
+                        <form method="POST" action="{% url 'dadmin:update_delivery_boy_status' boy.id 'approved' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn approve">Approve</button>
+                        </form>
+                    {% endif %}
+                    
+                    <form method="POST" action="{% url 'dadmin:update_delivery_boy_status' boy.id 'rejected' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn reject">Reject</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    
+    {% include 'adminfooter.html' %}

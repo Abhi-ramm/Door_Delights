@@ -1,0 +1,160 @@
+{% load static %}
+{% include 'customer_header.html' %}
+
+<!-- Display any messages -->
+{% if messages %}
+    <div class="alert alert-danger">
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<!-- cart -->
+<div class="cart-section mt-150 mb-150">
+    <div class="container">
+        <div class="row">
+            {% if cart_items %}
+                <!-- Cart Table Section -->
+                <div class="col-lg-8 col-md-12">
+                    <div class="cart-table-wrap">
+                        <table class="cart-table table table-striped">
+                            <thead class="cart-table-head">
+                                <tr class="table-head-row">
+                                    <th class="product-remove">Remove</th>
+                                    <th class="product-image">Product Image</th>
+                                    <th class="product-name">Name</th>
+                                    <th class="product-price">Price</th>
+                                    <th class="product-quantity">Quantity</th>
+                                    <th class="product-supercoins">SuperCoins</th>
+                                    <th class="product-total">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in cart_items %}
+                                    <tr class="table-body-row">
+                                        <td class="product-remove">
+                                            <a href="{% url 'customer:remove_from_cart' item.id %}" class="btn btn-danger btn-sm">
+                                                <i class="far fa-window-close"></i>
+                                            </a>
+                                        </td>
+                                        <td class="product-image">
+                                            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="img-fluid" style="max-width: 80px;">
+                                        </td>
+                                        <td class="product-name">{{ item.product.name }}</td>
+                                        <td class="product-price">₹{{ item.product.price }}</td>
+                                        <td class="product-quantity">
+                                            <form method="POST" action="{% url 'customer:update_cart' item.id %}">
+                                                {% csrf_token %}
+                                                <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.product.stock }}" class="form-control stock-check" style="width: 80px;">
+                                                <input type="submit" value="Update" class="btn btn-warning btn-sm mt-2 update-cart" style="padding: 5px 10px; font-size: 12px;">
+                                            </form>
+                                        </td>
+                                        <td class="product-supercoins">{{ item.product.supercoins }}</td>
+                                        <td class="product-total">₹{{ item.get_total_price }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Cart Summary Section -->
+                <div class="col-lg-4">
+                    <div class="total-section">
+                        <table class="total-table table">
+                            <thead class="total-table-head">
+                                <tr class="table-total-row">
+                                    <th>Total</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="total-data">
+                                    <td><strong>Subtotal:</strong></td>
+                                    <td>₹{{ total_price }}</td>
+                                </tr>
+                                <tr class="total-data">
+                                    <td><strong>Total SuperCoins for Cart:</strong></td>
+                                    <td>{{ total_supercoins }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="cart-buttons">
+                            <a href="{% url 'customer:checkout' %}" class="btn btn-success btn-block">Check Out</a>
+                        </div>
+                    </div>
+
+                    <!-- Back to Shop Section -->
+                    <div class="back-to-shop-btn mt-4 text-center">
+                        <a href="{% url 'customer:shop' %}" class="btn btn-secondary btn-lg">Back to Shop</a>
+                    </div>
+                </div>
+            {% else %}
+                <!-- Empty Cart Message -->
+                <div class="col-lg-12 text-center">
+                    <h3 class="mt-4">Your Cart is Empty</h3>
+                    <p>Add some products to your cart before proceeding to checkout.</p>
+                    <a href="{% url 'customer:shop' %}" class="btn btn-primary btn-lg">Start Shopping</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<!-- end cart -->
+
+{% include 'customer_footer.html' %}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let quantityInputs = document.querySelectorAll(".stock-check");
+        let updateButtons = document.querySelectorAll(".update-cart");
+
+        quantityInputs.forEach(input => {
+            input.addEventListener("change", function () {
+                let maxStock = parseInt(this.max);
+                let enteredQuantity = parseInt(this.value);
+
+                if (maxStock === 0) {
+                    alert("⚠️ This product is out of stock!");
+                    this.value = 0; // Prevent adding to cart
+                    return;
+                }
+
+                if (enteredQuantity > maxStock) {
+                    alert(`⚠️ Only ₹{maxStock} units available.`);
+                    this.value = maxStock;
+                }
+            });
+        });
+
+        // Prevent updating cart if stock is 0
+        updateButtons.forEach(button => {
+            button.addEventListener("click", function (event) {
+                let productRow = event.target.closest(".table-body-row");
+                let stockElement = productRow.querySelector(".stock-check");
+                let stock = parseInt(stockElement.max);
+
+                if (stock === 0) {
+                    alert("⚠️ Sorry, this product is out of stock and cannot be updated.");
+                    event.preventDefault(); // Stop form submission
+                }
+            });
+        });
+
+        // Prevent adding out-of-stock products to the cart
+        let addToCartButtons = document.querySelectorAll(".btn-primary");
+        addToCartButtons.forEach(button => {
+            button.addEventListener("click", function (event) {
+                let productRow = event.target.closest(".table-body-row");
+                let stockElement = productRow.querySelector(".stock-check");
+                let stock = parseInt(stockElement.max);
+
+                if (stock === 0) {
+                    alert("⚠️ Sorry, this product is out of stock and cannot be added to the cart.");
+                    event.preventDefault(); // Stop form submission
+                }
+            });
+        });
+    });
+</script>

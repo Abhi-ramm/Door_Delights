@@ -1,0 +1,58 @@
+{% load static %}
+{% include 'chefheader.html' %}
+
+<div class="container p-4">
+    <h2 class="text-center">Edit Product</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="card p-4 shadow-sm">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label>Product Name:</label>
+                <input type="text" name="name" class="form-control" value="{{ product.name }}" required>
+            </div>
+            <div class="mb-3">
+                <label>Description:</label>
+                <textarea name="description" class="form-control" required>{{ product.description }}</textarea>
+            </div>
+            <div class="mb-3">
+                <label>Price (₹):</label>
+                <input type="number" name="price" class="form-control" value="{{ product.price }}" required>
+            </div>
+            <div class="mb-3">
+                <label>SuperCoins:</label>
+                <input type="number" name="supercoins" class="form-control" value="{{ product.supercoins }}" min="0" required>
+            </div>
+            <div class="mb-3">
+                <label>Stock:</label>
+                <input type="number" name="stock" class="form-control" value="{{ product.stock }}" min="0" required>
+            </div>
+            <div class="mb-3">
+                <label>Category:</label>
+                <select name="category" class="form-control" required>
+                    <option value="Breakfast" {% if product.category == "Breakfast" %}selected{% endif %}>Breakfast</option>
+                    <option value="Lunch" {% if product.category == "Lunch" %}selected{% endif %}>Lunch</option>
+                    <option value="Evening Snack" {% if product.category == "Evening Snack" %}selected{% endif %}>Evening Snack</option>
+                    <option value="Dinner" {% if product.category == "Dinner" %}selected{% endif %}>Dinner</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label>Current Product Image:</label><br>
+                <img src="{{ product.image.url }}" class="img-thumbnail" style="max-width: 150px;">
+            </div>
+            <div class="mb-3">
+                <label>Upload New Image (optional):</label>
+                <input type="file" name="image" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Update Product</button>
+        </form>
+    </div>
+</div>
+
+{% include 'cheffooter.html' %}

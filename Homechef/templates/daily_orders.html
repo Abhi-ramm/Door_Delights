@@ -1,0 +1,80 @@
+{% include 'chefheader.html' %}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Daily Orders</h2>
+
+    <!-- Add a button to download daily orders -->
+    <div class="text-center mb-4">
+        <a href="{% url 'Homechef:daily_orders' %}?download=excel" class="btn btn-success">
+            📥 Download Daily Orders (Excel)
+        </a>
+        
+        
+    </div>
+
+    <!-- Display Total Amount for Today's Orders -->
+    <div class="text-center mb-4">
+        <h4>Total Amount for Today: ₹{{ total_today }}</h4>
+    </div>
+
+    {% if orders %}
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Customer Name</th>
+                        <th>Products</th>
+                        <th>Total Price</th>
+                        <th>Payment Method</th>
+                        <th>Payment Status</th>
+                        <th>Assigned Delivery Boy</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                        <tr>
+                            <td>{{ order.customer.name }}</td>
+                            <td class="text-left">
+                                <ul class="list-unstyled">
+                                    {% for item in order.order_items.all %}
+                                        <li>🍽️ <strong>{{ item.product.name }}</strong> (x{{ item.quantity }}) - ₹{{ item.price_at_purchase }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                            <td><strong>₹{{ order.total_amount }}</strong></td>
+                            <td>{{ order.payment_method }}</td>
+                            
+                            <td>
+                                <span class="order-badge 
+                                    {% if order.status == 'completed' %} badge-paid 
+                                    {% elif order.status == 'failed' %} badge-failed 
+                                    {% elif order.status == 'pending' %} badge-pending 
+                                    {% elif order.status == 'processing' %} badge-processing 
+                                    {% elif order.status == 'cancelled' %} badge-cancelled 
+                                    {% else %} bg-primary text-white {% endif %}">
+                                    {{ order.status }}
+                                </span>
+                            </td>
+                            <td>
+                                {% with order.deliveryassignment_set.first as assignment %}
+                                    {% if assignment %}
+                                        {{ assignment.delivery_boy.full_name }}
+                                    {% else %}
+                                        <span class="text-muted">Not assigned</span>
+                                    {% endif %}
+                                {% endwith %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="text-center">
+            <h3 class="mt-4">No Orders Found for Today</h3>
+            <p>Looks like there are no orders yet today!</p>
+        </div>
+    {% endif %}
+</div>
+
+{% include 'cheffooter.html' %}

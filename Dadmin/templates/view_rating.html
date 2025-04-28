@@ -1,0 +1,39 @@
+{% load static %}
+{% include 'adminheader.html' %}  <!-- Ensure you have an admin header -->
+
+<div class="container mt-5">
+    <h2 class="text-center">Customer Reviews</h2>
+    
+    <table class="table table-bordered table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>Date</th>
+                <th>Product Name</th>
+                <th>Chef Name</th>
+                <th>User Name</th>
+                <th>Rating</th>
+                <th>Feedback</th>
+               
+            </tr>
+        </thead>
+        <tbody>
+            {% for review in reviews %}
+                <tr>
+                    <td>{{ review.created_at|date:"M d, Y" }}</td>
+                    <td>{{ review.product.name }}</td>
+                    <td>{{ review.product.chef.full_name|default:"No Chef" }}</td>
+                    <td>{{ review.user.name }}</td>
+                    <td>⭐ {{ review.rating }}/5</td>
+                    <td>{{ review.comment }}</td>
+                   
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">No reviews found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% include 'adminfooter.html' %}  <!-- Ensure you have an admin footer -->

@@ -1,0 +1,54 @@
+{% load static %}
+{% include 'recyclerheader.html' %} 
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4" style="font-weight: bold; color: #333;">My Garbage Requests</h2>
+
+    {% if requests %}
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Garbage Type</th>
+                    <th>Quantity (kg)</th>
+                    <th>Pickup Date</th>
+                    <th>Status</th>
+                    <th>Request Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for request in requests %}
+                    {% for type, weight in request.garbage_details.items %}
+                    <tr>
+                        {% if forloop.first %}
+                            <td rowspan="{{ request.garbage_details|length }}">{{ forloop.parentloop.counter }}</td>
+                        {% endif %}
+                        <td>{{ type|capfirst }}</td>
+                        <td>{{ weight }} kg</td>
+                        {% if forloop.first %}
+                            <td rowspan="{{ request.garbage_details|length }}">{{ request.pickup_date }}</td>
+                            <td rowspan="{{ request.garbage_details|length }}">
+                                {% if request.status == "pending" %}
+                                    <span class="badge bg-warning text-dark">Pending</span>
+                                {% elif request.status == "approved" %}
+                                    <span class="badge bg-success">Approved</span>
+                                {% elif request.status == "rejected" %}
+                                    <span class="badge bg-danger">Rejected</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ request.status }}</span>
+                                {% endif %}
+                            </td>
+                            <td rowspan="{{ request.garbage_details|length }}">{{ request.request_date|date:"Y-m-d H:i" }}</td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                {% endfor %}
+            </tbody>
+            
+        </table>
+    {% else %}
+        <p class="text-center">No requests found.</p>
+    {% endif %}
+</div>
+
+{% include 'recyclerfooter.html' %}

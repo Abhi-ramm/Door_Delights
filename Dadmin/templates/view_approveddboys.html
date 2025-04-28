@@ -1,0 +1,79 @@
+{% load static %}
+
+{% include 'adminheader.html' %}
+    <title>Approved Delivery Boys</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f4f4f4;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            max-width: 800px;
+            margin: auto;
+        }
+        h2 {
+            color: #007bff;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background: #007bff;
+            color: white;
+        }
+        img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #007bff;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Approved Delivery Boys</h2>
+    
+    {% if approved_boys %}
+        <table>
+            <tr>
+                <th>Photo</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Aadhaar</th>
+                <th>License</th>
+            </tr>
+            {% for boy in approved_boys %}
+                <tr>
+                    <td><img src="{{ boy.photo.url }}" alt="Photo"></td>
+                    <td>{{ boy.full_name }}</td>
+                    <td>{{ boy.phone_number }}</td>
+                    <td>{{ boy.email }}</td>
+                    <td>{{ boy.aadhaar_number }}</td>
+                    <td>{{ boy.license_number }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>No approved delivery boys found.</p>
+    {% endif %}
+</div>
+
+{% include 'adminfooter.html' %}

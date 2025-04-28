@@ -1,0 +1,38 @@
+{% load static %}
+{% include 'boysheader.html' %}
+
+<main class="content">
+    <div class="container-fluid p-0">
+
+        <h1 class="h3 mb-3">
+            <strong>Welcome, {{ delivery_boy.full_name }}</strong>
+        </h1>
+
+        <div class="row mt-4">
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm border-light rounded">
+                    <div class="card-body text-center">
+                        <h5 class="card-title font-weight-bold text-primary">Check Orders</h5>
+                        <p class="text-muted mb-3">View and manage your assigned deliveries.</p>
+                        <a href="{% url 'deliveryboys:assigned_delivery_boy' delivery_boy.id %}" class="btn btn-primary w-100 py-2 font-weight-bold">View Orders</a>
+                    </div>
+                </div>
+            </div>
+
+            
+
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm border-light rounded">
+                    <div class="card-body text-center">
+                        <h5 class="card-title font-weight-bold text-success">Profile</h5>
+                        <p class="text-muted mb-3">View and update your personal details.</p>
+                        <a href="{% url 'deliveryboys:delivery_boy_profile' %}" class="btn btn-success w-100 py-2 font-weight-bold">View Profile</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+{% include 'boysfooter.html' %}

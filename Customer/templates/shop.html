@@ -1,0 +1,235 @@
+{% load static %}
+{% include 'customer_header.html' %}
+
+<!-- Breadcrumb Section -->
+<div class="breadcrumb-section breadcrumb-bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2 text-center">
+                <div class="breadcrumb-text">
+                    <p>Fresh and Organic</p>
+                    <h1>Shop</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Product Section -->
+<div class="product-section mt-150 mb-150">
+    <div class="container">
+        <div class="row product-lists">
+            {% for category, products in categorized_products.items %}
+                {% for product in products %}
+                    <div class="col-lg-4 col-md-6 text-center product-item {{ category|lower|cut:' ' }}">
+                        <div class="single-product-item" data-stock="{{ product.stock }}">
+                            <div class="product-image">
+                                <a href="#"><img src="{{ product.image.url }}" alt="{{ product.name }}"></a>
+                            </div>
+                            <h3 class="product-title">{{ product.name }}</h3>
+                            <p class="chef-name">By Chef: <strong>{{ product.chef.full_name }}</strong></p>
+
+                            <!-- Display Average Rating -->
+                            <p class="product-rating">
+                                ⭐ {{ product.average_rating|floatformat:1 }}/5 
+                                ({{ product.reviews.count }} reviews)
+                            </p>
+
+                            <p class="product-description">{{ product.description }}</p>
+                            <div class="price-row">
+                                <p class="product-price">₹{{ product.price }}</p>
+                                <p class="supercoins"><i class="fas fa-coins"></i> {{ product.supercoins }} SuperCoins</p>
+                            </div>
+
+                            <!-- Add to Cart / Out of Stock -->
+                            {% if product.stock > 0 %}
+                                <a href="{% url 'customer:add_to_cart' product.id %}" class="cart-btn">
+                                    <i class="fas fa-shopping-cart"></i> Add to Cart
+                                </a>
+                            {% else %}
+                                <button class="cart-btn out-of-stock" disabled>
+                                    <i class="fas fa-times-circle"></i> Out of Stock
+                                </button>
+                            {% endif %}
+
+                            <!-- Review Button -->
+                            <a href="{% url 'customer:review_page' product.id %}" class="review-btn">
+                                <i class="fas fa-edit"></i> Write / View  Review
+                            </a>
+
+                           
+                            
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for Review Submission & Filter -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Filter Functionality
+        const categoryFilter = document.querySelector("#category-filter");
+        const productItems = document.querySelectorAll(".product-item");
+
+        categoryFilter.addEventListener("click", function (event) {
+            if (event.target.tagName === "LI") {
+                const selectedCategory = event.target.getAttribute("data-filter");
+
+                document.querySelectorAll("#category-filter li").forEach(li => li.classList.remove("active"));
+                event.target.classList.add("active");
+
+                productItems.forEach(item => {
+                    if (selectedCategory === "all" || item.classList.contains(selectedCategory)) {
+                        item.style.display = "block";
+                    } else {
+                        item.style.display = "none";
+                    }
+                });
+            }
+        });
+
+        // Prevent Adding Out-of-Stock Items
+        let addToCartButtons = document.querySelectorAll(".cart-btn");
+
+        addToCartButtons.forEach(button => {
+            button.addEventListener("click", function (event) {
+                let productContainer = this.closest(".single-product-item");
+                let productStock = parseInt(productContainer.getAttribute("data-stock"));
+
+                if (productStock === 0) {
+                    event.preventDefault();
+                    alert("⚠ This product is out of stock and cannot be added to the cart.");
+                }
+            });
+        });
+    });
+</script>
+
+{% include 'customer_footer.html' %}
+
+<!-- Custom CSS -->
+<style>
+    .single-product-item {
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s, box-shadow 0.3s;
+        min-height: 550px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .single-product-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .product-image img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    .product-title {
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+        min-height: 40px;
+    }
+
+    .product-rating {
+        font-size: 14px;
+        color: #ff9800;
+    }
+
+    .chef-name {
+        font-size: 14px;
+        color: #777;
+    }
+
+    .product-description {
+        text-align: justify;
+        color: #555;
+    }
+
+    .price-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: bold;
+    }
+
+    .product-price {
+        color: #28a745;
+        font-size: 18px;
+    }
+
+    .supercoins {
+        color: #f39c12;
+        font-size: 16px;
+    }
+
+    .cart-btn {
+        display: inline-block;
+        background: #28a745;
+        color: #fff;
+        padding: 10px 15px;
+        border-radius: 5px;
+        font-weight: bold;
+        transition: background 0.3s;
+    }
+
+    .cart-btn:hover {
+        background: #218838;
+    }
+
+    .out-of-stock {
+        background: #dc3545;
+        cursor: not-allowed;
+    }
+
+    /* Styled Review Button */
+    .review-btn {
+        display: inline-block;
+        background: #007bff;
+        color: #fff;
+        padding: 10px 15px;
+        border-radius: 5px;
+        font-weight: bold;
+        transition: background 0.3s, transform 0.2s;
+        text-decoration: none;
+        margin-top: 10px;
+    }
+
+    .review-btn i {
+        margin-right: 5px;
+    }
+
+    .review-btn:hover {
+        background: #0056b3;
+        transform: scale(1.05);
+    }
+
+    .review-btn:active {
+        transform: scale(0.95);
+    }
+
+    .reviews {
+        margin-top: 15px;
+        background: #f8f9fa;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    .review {
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 5px;
+        margin-bottom: 5px;
+    }
+</style>

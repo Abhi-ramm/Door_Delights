@@ -1,0 +1,54 @@
+{% load static %}
+{% include 'chefheader.html' %}
+
+<div class="container p-4">
+    <h2 class="text-center">Add Product</h2>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="card p-4 shadow-sm">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label>Product Name:</label>
+                <input type="text" name="name" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label>Description:</label>
+                <textarea name="description" class="form-control" required></textarea>
+            </div>
+            <div class="mb-3">
+                <label>Price (₹):</label>
+                <input type="number" name="price" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label>SuperCoins:</label>
+                <input type="number" name="supercoins" class="form-control" min="0" required>
+            </div>
+            <div class="mb-3">
+                <label>Stock:</label>
+                <input type="number" name="stock" class="form-control" min="0" required>
+            </div>
+            <div class="mb-3">
+                <label>Category:</label>
+                <select name="category" class="form-control" required>
+                    <option value="Breakfast">Breakfast</option>
+                    <option value="Lunch">Lunch</option>
+                    <option value="Evening Snack">Evening Snack</option>
+                    <option value="Dinner">Dinner</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label>Product Image:</label>
+                <input type="file" name="image" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-success w-100">Add Product</button>
+        </form>
+    </div>
+</div>
+
+{% include 'cheffooter.html' %}

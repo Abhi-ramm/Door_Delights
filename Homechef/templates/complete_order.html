@@ -1,0 +1,83 @@
+{% include 'chefheader.html' %}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Completed Orders</h2>
+
+    {% if orders %}
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Order Date</th>
+                        <th>Customer Name</th>
+                        <th>Products</th>
+                        <th>Total Price</th>
+                        <th>Payment Method</th>
+                        <th>Payment Status</th>
+                        <th>Order Status</th>
+                        <th>Assigned Delivery Boy</th>
+                      
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                        {% if order.status == 'completed' %}
+                            <tr>
+                                <td><strong>#{{ order.id }}</strong></td>
+                                <td>{{ order.created_at }}</td>
+                                <td>{{ order.customer.name }}</td>
+                                <td class="text-left">
+                                    <ul class="list-unstyled">
+                                        {% for item in order.order_items.all %}
+                                            <li>🍽️ <strong>{{ item.product.name }}</strong> (x{{ item.quantity }}) - ₹{{ item.price_at_purchase }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </td>
+                                <td><strong>₹{{ order.total_amount }}</strong></td>
+                                <td>{{ order.payment_method }}</td>
+                                <td>
+                                    <span class="order-badge 
+                                        {% if order.payment_status == 'paid' %} badge-paid 
+                                        {% elif order.payment_status == 'failed' %} badge-failed 
+                                        {% elif order.payment_status == 'pending' %} badge-pending 
+                                        {% else %} badge-cancelled {% endif %}">
+                                        {{ order.payment_status }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="order-badge 
+                                        {% if order.status == 'completed' %} badge-paid 
+                                        {% elif order.status == 'failed' %} badge-failed 
+                                        {% elif order.status == 'pending' %} badge-pending 
+                                        {% elif order.status == 'processing' %} badge-processing 
+                                        {% elif order.status == 'cancelled' %} badge-cancelled 
+                                        {% else %} bg-primary text-white {% endif %}">
+                                        {{ order.status }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% with order.deliveryassignment_set.first as assignment %}
+                                        {% if assignment %}
+                                            {{ assignment.delivery_boy.full_name }}
+                                        {% else %}
+                                            <span class="text-muted">Not assigned</span>
+                                        {% endif %}
+                                    {% endwith %}
+                                </td>
+                               
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="text-center">
+            <h3 class="mt-4">No Completed Orders Found</h3>
+            <p>Looks like there are no completed orders yet!</p>
+        </div>
+    {% endif %}
+</div>
+
+{% include 'cheffooter.html' %}

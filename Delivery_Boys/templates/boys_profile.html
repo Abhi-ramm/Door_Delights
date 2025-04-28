@@ -1,0 +1,75 @@
+{% load static %}
+{% include 'boysheader.html' %}
+
+<main class="content">
+    <div class="container mt-5">
+        <h2 class="text-center">Delivery Boy Profile</h2>
+
+        <div class="card shadow-lg p-4 mx-auto" style="max-width: 500px;">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="text-center mb-3">
+                    <label for="photo">
+                        <img src="{{ delivery_boy.photo.url }}" id="profileImage" class="rounded-circle shadow-sm" width="150" height="150" alt="Profile Photo" style="cursor: pointer;">
+                    </label>
+                    <input type="file" id="photo" name="photo" class="d-none" onchange="previewImage(event)">
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="fw-bold">Full Name:</label>
+                    <input type="text" name="full_name" class="form-control" value="{{ delivery_boy.full_name }}" required>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="fw-bold">Phone Number:</label>
+                    <input type="text" name="phone_number" class="form-control" value="{{ delivery_boy.phone_number }}" required>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="fw-bold">Email:</label>
+                    <input type="email" class="form-control" value="{{ delivery_boy.email }}" readonly>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="fw-bold">Aadhaar Number:</label>
+                    <input type="text" class="form-control" value="{{ delivery_boy.aadhaar_number }}" readonly>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="fw-bold">License Number:</label>
+                    <input type="text" class="form-control" value="{{ delivery_boy.license_number }}" readonly>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="fw-bold">Status:</label>
+                    <input type="text" class="form-control" value="{{ delivery_boy.get_status_display }}" readonly>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="fw-bold">Availability Status:</label>
+                    <select name="availability_status" class="form-control">
+                        <option value="available" {% if delivery_boy.availability_status == "available" %}selected{% endif %}>Available</option>
+                        <option value="not_available" {% if delivery_boy.availability_status == "not_available" %}selected{% endif %}>Not Available</option>
+                    </select>
+                </div>
+
+                <div class="text-center mt-3">
+                    <button type="submit" class="btn btn-success">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<script>
+    function previewImage(event) {
+        const reader = new FileReader();
+        reader.onload = function() {
+            document.getElementById('profileImage').src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+</script>
+
+{% include 'boysfooter.html' %}

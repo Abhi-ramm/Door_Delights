@@ -1,0 +1,163 @@
+{% include 'chefheader.html' %}
+<style>
+    .table-responsive {
+        border-radius: 10px;
+        overflow: hidden;
+        background: white;
+        padding: 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .table {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .table thead {
+        background: #212529;
+        color: white;
+        text-transform: uppercase;
+    }
+
+    .table th, .table td {
+        text-align: center;
+        vertical-align: middle;
+        padding: 15px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .table tbody tr:nth-child(even) {
+        background-color: #f8f9fa;
+    }
+
+    .table tbody tr:hover {
+        background: #e9ecef;
+        transition: 0.3s ease-in-out;
+    }
+
+    .order-badge {
+        font-size: 14px;
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-weight: bold;
+        display: inline-block;
+        min-width: 100px;
+        text-align: center;
+        box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .badge-paid {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .badge-failed {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .badge-pending {
+        background-color: #ffc107;
+        color: black;
+    }
+
+    .badge-processing {
+        background-color: #17a2b8;
+        color: white;
+    }
+
+    .badge-cancelled {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .assign-form {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .assign-form select {
+        margin-right: 10px;
+        padding: 5px;
+    }
+</style>
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">My Orders</h2>
+
+    {% if orders %}
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Order Date</th>
+                        <th>Customer Name</th>
+                        <th>Products</th>
+                        <th>Total Price</th>
+                        <th>Payment Method</th>
+                        <th>Payment Status</th>
+                        <th>Order Status</th>
+                        <th>Assign Delivery</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                        <tr>
+                            <td><strong>#{{ order.order_id }}</strong></td>
+                            <td>{{ order.order_date }}</td>
+                            <td>{{ order.customer_name }}</td>
+                            <td class="text-left">
+                                <ul class="list-unstyled">
+                                    {% for item in order.items %}
+                                        <li>🍽️ <strong>{{ item.product_name }}</strong> (x{{ item.quantity }}) - ₹{{ order.total_price }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                            <td><strong>₹{{ order.total_price }}</strong></td>
+                            <td>{{ order.payment_method }}</td>
+                            <td>
+                                <span class="order-badge 
+                                    {% if order.payment_status == 'Paid' %} badge-paid 
+                                    {% elif order.payment_status == 'Failed' %} badge-failed 
+                                    {% elif order.payment_status == 'Pending' %} badge-pending 
+                                    {% else %} badge-cancelled {% endif %}">
+                                    {{ order.payment_status }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="order-badge 
+                                    {% if order.order_status == 'Completed' %} badge-paid 
+                                    {% elif order.order_status == 'Failed' %} badge-failed 
+                                    {% elif order.order_status == 'Pending' %} badge-pending 
+                                    {% elif order.order_status == 'Processing' %} badge-processing 
+                                    {% elif order.order_status == 'Cancelled' %} badge-cancelled 
+                                    {% else %} bg-primary text-white {% endif %}">
+                                    {{ order.order_status }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if order.order_id %}
+                                <a href="{% url 'homechef:assign_delivery' order.order_id %}" class="btn btn-primary btn-sm">
+                                    🚚 Assign Delivery
+                                </a>
+                            {% else %}
+                                <span class="text-muted">No Order ID</span>
+                            {% endif %}
+                            
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="text-center">
+            <h3 class="mt-4">No Orders Found</h3>
+            <p>Looks like no one has ordered your dishes yet!</p>
+        </div>
+    {% endif %}
+</div>
+
+{% include 'cheffooter.html' %}

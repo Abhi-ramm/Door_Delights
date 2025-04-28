@@ -1,0 +1,35 @@
+{% load static %}
+{% include 'adminheader.html' %}
+
+<div class="container mt-5" style="max-width: 900px; padding: 30px; background: #ffffff; border-radius: 10px; box-shadow: 0px 4px 12px rgba(0,0,0,0.1);">
+    <h2 class="text-center mb-4" style="color: #333; font-weight: bold;">Customer List</h2>
+
+    {% if customers %}
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped" style="border-collapse: collapse; width: 100%;">
+                <thead class="table-light">
+                    <tr style="background-color: #f8f9fa; text-align: center;">
+                        <th style="padding: 10px; border: 1px solid #ddd;">Name</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">Email</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">Phone</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">Address</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for customer in customers %}
+                    <tr style="text-align: center;">
+                        <td style="padding: 10px; border: 1px solid #ddd;">{{ customer.name }}</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">{{ customer.email }}</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">{{ customer.phone }}</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">{{ customer.address }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-center" style="font-size: 1.2rem; color: #888;">No customers found.</p>
+    {% endif %}
+</div>
+
+{% include 'adminfooter.html' %}

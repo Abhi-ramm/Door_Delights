@@ -1,0 +1,210 @@
+{% load static %}
+{% include 'customer_header.html' %}
+
+<style>
+    /* General Styles */
+    .checkout-section {
+        background: #f8f9fa;
+        padding: 50px 0;
+    }
+
+    .billing-address-form {
+        background: #fff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .billing-address-form input, 
+    .billing-address-form select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    #cardFields {
+        margin-top: 15px;
+        padding: 15px;
+        background: #f9f9f9;
+        border-radius: 5px;
+        display: none;
+    }
+
+    .boxed-btn {
+        display: block;
+        width: 100%;
+        text-align: center;
+        background: #28a745;
+        color: #fff;
+        font-size: 18px;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+
+    .boxed-btn:hover {
+        background: #218838;
+    }
+
+    .order-details-wrap {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .order-details th, .order-details td {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+    }
+
+    .order-details th {
+        background: #343a40;
+        color: #fff;
+    }
+
+    .total-box {
+        margin-top: 20px;
+        padding: 15px;
+        background: #f9f9f9;
+        border-radius: 5px;
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+    }
+</style>
+
+<div class="checkout-section">
+    <div class="container">
+        <div class="row">
+            <!-- Billing & Payment -->
+            <div class="col-lg-8">
+                <div class="billing-address-form">
+                    <h3>Billing Details</h3>
+                    <form action="" method="POST" id="checkoutForm">
+                        {% csrf_token %}
+                        <p><input type="text" name="name" value="{{ user_details.name }}" placeholder="Full Name" required></p>
+                        <p><input type="email" name="email" value="{{ user_details.email }}" placeholder="Email Address" required></p>
+                        <p><input type="text" name="address" value="{{ user_details.address }}" placeholder="Shipping Address" required></p>
+                        <p><input type="tel" name="phone" value="{{ user_details.phone }}" placeholder="Phone Number" required></p>
+
+                        <p>
+                            <label for="payment_method">Payment Method:</label>
+                            <select name="payment_method" id="payment_method" onchange="togglePaymentFields()">
+                                <option value="supercoins">Supercoins</option>
+                                <option value="card">Card</option>
+                                <option value="cash">Cash</option>
+                            </select>
+                        </p>
+
+                        <div id="cardFields">
+                            <p><input type="text" name="card_number" id="card_number" placeholder="Card Number" pattern="\d{16}" maxlength="16"></p>
+                            <p><input type="text" name="expiry_date" id="expiry_date" placeholder="MM/YYYY" maxlength="7"></p>
+                            <p><input type="text" name="cvv" id="cvv" placeholder="CVV" pattern="\d{3,4}" maxlength="4"></p>
+                        </div>
+
+                        <p>
+                            <label for="supercoins_used">Supercoins to Use:</label>
+                            <input type="number" name="supercoins_used" id="supercoins_used" min="0" max="{{ supercoins_balance }}" value="0" oninput="updateTotal()">
+                        </p>
+
+                        <div class="total-box">
+                            <p>Total Amount to Pay: ₹<span id="final_amount">{{ total_price }}</span></p>
+                        </div>
+
+                        <button type="submit" class="boxed-btn">Place Order</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="col-lg-4">
+                <div class="order-details-wrap">
+                    <h3>Order Summary</h3>
+                    <table class="order-details">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in cart_items %}
+                            <tr>
+                                <td>{{ item.product.name }} x {{ item.quantity }}</td>
+                                <td>₹{{ item.get_total_price }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td>Subtotal</td>
+                                <td>₹{{ total_price }}</td>
+                            </tr>
+                            <tr>
+                                <td>Available Supercoins</td>
+                                <td>{{ supercoins_balance }}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include 'customer_footer.html' %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("payment_method").addEventListener("change", togglePaymentFields);
+        document.getElementById("supercoins_used").addEventListener("input", updateTotal);
+        document.getElementById("checkoutForm").addEventListener("submit", validateOrder);
+        updateTotal();
+    });
+
+    function updateTotal() {
+        let totalPrice = parseFloat("{{ total_price }}");
+        let supercoinsBalance = parseInt("{{ supercoins_balance }}");
+        let supercoinsUsed = parseInt(document.getElementById("supercoins_used").value) || 0;
+        let paymentMethod = document.getElementById("payment_method").value;
+
+        if (supercoinsUsed > supercoinsBalance) {
+            document.getElementById("supercoins_used").value = supercoinsBalance;
+            supercoinsUsed = supercoinsBalance;
+        }
+
+        let supercoinValue = supercoinsUsed * 10;
+        let finalAmount = Math.max(totalPrice - supercoinValue, 0);
+        document.getElementById("final_amount").innerText = finalAmount.toFixed(2);
+    }
+
+    function togglePaymentFields() {
+        let paymentMethod = document.getElementById("payment_method").value;
+        document.getElementById("cardFields").style.display = paymentMethod === "card" ? "block" : "none";
+
+        if (paymentMethod === "supercoins") {
+            let totalPrice = parseFloat("{{ total_price }}");
+            let supercoinsBalance = parseInt("{{ supercoins_balance }}");
+            let maxUsableSupercoins = Math.min(supercoinsBalance, Math.floor(totalPrice / 10));
+            document.getElementById("supercoins_used").value = maxUsableSupercoins;
+            updateTotal();
+        }
+    }
+
+    function validateOrder(event) {
+        let totalPrice = parseFloat("{{ total_price }}");
+        let supercoinsUsed = parseInt(document.getElementById("supercoins_used").value) || 0;
+        let supercoinValue = supercoinsUsed * 10;
+        let paymentMethod = document.getElementById("payment_method").value;
+
+        if (paymentMethod === "supercoins" && supercoinValue < totalPrice) {
+            alert("⚠️ You don't have enough supercoins. Please choose another payment method.");
+            event.preventDefault();
+        }
+    }
+</script>

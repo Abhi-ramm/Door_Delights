@@ -1,0 +1,175 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomeChef Signup</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #f8f9fa, #e9ecef);
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            background: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        td {
+            padding: 12px;
+            vertical-align: top;
+        }
+
+        .input-group label {
+            font-weight: bold;
+            color: #444;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: 0.3s;
+            box-sizing: border-box;
+        }
+
+        .input-group input:focus {
+            border-color: #000;
+            outline: none;
+            box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .button {
+            width: 100%;
+            padding: 12px;
+            background: black;
+            color: white;
+            font-size: 18px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .button:hover {
+            background: #333;
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Register as a HomeChef</h2>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <table>
+            <tr>
+                <td colspan="2">
+                    <div class="input-group">
+                        <label for="photo">Upload Photo:</label>
+                        <input type="file" id="photo" name="photo" required>
+                        <div class="error">{{ errors.photo }}</div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="input-group">
+                        <label>Full Name:</label>
+                        <input type="text" name="fullName" value="{{ form_data.fullName }}" required>
+                        <div class="error">{{ errors.fullName }}</div>
+                    </div>
+                </td>
+                <td>
+                    <div class="input-group">
+                        <label>Phone Number:</label>
+                        <input type="tel" name="phone" value="{{ form_data.phone }}" required>
+                        <div class="error">{{ errors.phone }}</div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="input-group">
+                        <label>Email:</label>
+                        <input type="email" name="email" value="{{ form_data.email }}" required>
+                        <div class="error">{{ errors.email }}</div>
+                    </div>
+                </td>
+                <td>
+                    <div class="input-group">
+                        <label>Aadhaar Number:</label>
+                        <input type="text" name="aadhaar" value="{{ form_data.aadhaar }}" required>
+                        <div class="error">{{ errors.aadhaar }}</div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <div class="input-group">
+                        <label>Dishes You Can Prepare:</label>
+                        <input type="text" name="dish" value="{{ form_data.dish }}" placeholder="E.g., porotta, kadala curry, egg curry" required>
+                        <div class="error">{{ errors.dish }}</div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="input-group">
+                        <label>Password:</label>
+                        <input type="password" name="password" required>
+                        <div class="error">{{ errors.password }}</div>
+                    </div>
+                </td>
+                <td>
+                    <div class="input-group">
+                        <label>Confirm Password:</label>
+                        <input type="password" name="confirmPassword" required>
+                        <div class="error">{{ errors.confirmPassword }}</div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        {% if errors.exception %}
+            <div class="error">{{ errors.exception }}</div>
+        {% endif %}
+
+        <button type="submit" class="button">Register</button>
+    </form>
+</div>
+
+</body>
+</html>

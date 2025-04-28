@@ -1,0 +1,113 @@
+{% load static %}
+{% include 'customer_header.html' %}
+
+<div class="order-section mt-150 mb-150">
+    <div class="container">
+        <h2 class="text-center mb-4">My Orders</h2>
+
+        <!-- Complaint Buttons Row -->
+        <div class="d-flex justify-content-between">
+            <a href="{% url 'customer:view_complaints' %}" 
+               class="btn btn-lg btn-secondary font-weight-bold p-3"
+               style="border-radius: 8px; box-shadow: 2px 4px 6px rgba(0,0,0,0.2); font-size: 18px;">
+               📜 View Complaints
+            </a>
+
+            <a href="{% url 'customer:submit_complaint' %}" 
+               class="btn btn-lg btn-danger font-weight-bold p-3"
+               style="border-radius: 8px; box-shadow: 2px 4px 6px rgba(0,0,0,0.2); font-size: 18px;">
+               🚨 Submit Complaint
+            </a>
+        </div>
+
+        {% if orders %}
+            <div class="table-responsive mt-4">
+                <table class="table table-bordered">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Order Date</th>
+                            <th>Products</th>
+                            <th>Total Amount</th>
+                            <th>SuperCoins Used</th>
+                            <th>Amount to Pay</th>
+                            <th>Payment Method</th>
+                            <th>Payment Status</th>
+                            <th>Order Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                            <tr>
+                                <td>#{{ order.checkout.id }}</td>
+                                <td>{{ order.checkout.created_at|date:"d M Y, h:i A" }}</td>
+                                <td>
+                                    <ul class="list-unstyled">
+                                        {% for item in order.order_items %}
+                                            <li class="mb-3 border-bottom pb-2">
+                                                <div class="d-flex align-items-center">
+                                                    <img src="{{ item.image_url|default:'/static/images/no-image.png' }}" 
+                                                         alt="{{ item.name }}" 
+                                                         class="img-fluid rounded" 
+                                                         style="width: 50px; height: 50px; object-fit: cover; margin-right: 10px;">
+                                                    <div>
+                                                        <strong>{{ item.name }}</strong> (x{{ item.quantity }}) - ₹{{ item.price }}<br>
+                                                        <small class="text-muted">👨‍🍳 Chef: {{ item.chef_name }}</small><br>
+                                                        
+                                                        {% if item.chef_id %}
+                                                            <a href="{% url 'customer:chat_with_chef' item.id %}"
+                                                               class="btn btn-sm btn-outline-primary mt-1 position-relative">
+                                                                💬 Chat
+                                                                {% if item.unread_count %}
+                                                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                                                        {{ item.unread_count }}
+                                                                    </span>
+                                                                {% endif %}
+                                                            </a>
+                                                        {% else %}
+                                                            <span class="text-muted">No Chef Assigned</span>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </td>
+                                
+                                <td>₹{{ order.checkout.total_amount }}</td>
+                                <td>{{ order.checkout.supercoins_used }}</td>
+                                <td>₹{{ order.checkout.amount_to_pay }}</td>
+                                <td>{{ order.checkout.get_payment_method_display }}</td>
+                                <td>
+                                    <span class="badge 
+                                        {% if order.checkout.payment_status == 'paid' %} badge-success 
+                                        {% elif order.checkout.payment_status == 'failed' %} badge-danger 
+                                        {% else %} badge-warning {% endif %}">
+                                        {{ order.checkout.get_payment_status_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge 
+                                        {% if order.checkout.status == 'completed' %} badge-success 
+                                        {% elif order.checkout.status == 'failed' %} badge-danger 
+                                        {% else %} badge-warning {% endif %}">
+                                        {{ order.checkout.get_status_display }}
+                                    </span>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center">
+                <img src="{% static 'images/no-orders.png' %}" alt="No Orders" class="img-fluid" style="max-width: 300px;">
+                <h3 class="mt-4">No Orders Found</h3>
+                <p>Start shopping and place your first order!</p>
+                <a href="{% url 'customer:shop' %}" class="btn btn-primary btn-lg">Go to Shop</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% include 'customer_footer.html' %}

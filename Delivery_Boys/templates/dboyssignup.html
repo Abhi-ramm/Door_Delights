@@ -1,0 +1,192 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery Boy Signup</title>
+    <style>
+        /* Import Google Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap');
+
+        /* Body Styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #007bff, #00c6ff);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* Form Container */
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            max-width: 500px; /* Smaller Form */
+            width: 100%;
+            text-align: center;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        h2 {
+            color: #333;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        /* Input Group */
+        .input-group {
+            text-align: left;
+            margin-bottom: 10px;
+        }
+
+        .input-group label {
+            font-weight: 500;
+            font-size: 14px;
+            color: #444;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .input-group input:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 6px rgba(0, 123, 255, 0.3);
+            background: white;
+        }
+
+        /* File Input */
+        .input-group input[type="file"] {
+            padding: 5px;
+            cursor: pointer;
+        }
+
+        /* Submit Button */
+        .button {
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(to right, #007bff, #0056b3);
+            color: white;
+            font-size: 15px;
+            font-weight: 500;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .button:hover {
+            background: linear-gradient(to right, #0056b3, #004099);
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+        }
+
+        /* Error Messages */
+        .error {
+            color: red;
+            font-size: 12px;
+            margin-top: 3px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 450px) {
+            .container {
+                padding: 15px;
+                max-width: 90%;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Registration for Delivery Boys</h2>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="input-group">
+            <label for="photo">Photo:</label>
+            <input type="file" id="photo" name="photo" required>
+            <div class="error">{{ errors.photo }}</div>
+        </div>
+
+        <div class="input-group">
+            <label>Full Name:</label>
+            <input type="text" name="fullName" value="{{ form_data.fullName }}" required>
+            <div class="error">{{ errors.fullName }}</div>
+        </div>
+
+        <div class="input-group">
+            <label>Phone:</label>
+            <input type="tel" name="phone" value="{{ form_data.phone }}" required>
+            <div class="error">{{ errors.phone }}</div>
+        </div>
+
+        <div class="input-group">
+            <label>Email:</label>
+            <input type="email" name="email" value="{{ form_data.email }}" required>
+            <div class="error">{{ errors.email }}</div>
+        </div>
+
+        <div class="input-group">
+            <label>Aadhaar:</label>
+            <input type="text" name="aadhaar" value="{{ form_data.aadhaar }}" required>
+            <div class="error">{{ errors.aadhaar }}</div>
+        </div>
+
+        <div class="input-group">
+            <label>License Number:</label>
+            <input type="text" name="license" value="{{ form_data.license }}" required>
+            <div class="error">{{ errors.license }}</div>
+        </div>
+
+        <div class="input-group">
+            <label>Password:</label>
+            <input type="password" name="password" required>
+            <div class="error">{{ errors.password }}</div>
+        </div>
+
+        <div class="input-group">
+            <label>Confirm Password:</label>
+            <input type="password" name="confirmPassword" required>
+            <div class="error">{{ errors.confirmPassword }}</div>
+        </div>
+
+        {% if errors.exception %}
+            <div class="error">{{ errors.exception }}</div>
+        {% endif %}
+
+        <button type="submit" class="button">Register</button>
+    </form>
+</div>
+
+</body>
+</html>

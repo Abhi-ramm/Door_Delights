@@ -1,0 +1,55 @@
+{% load static %}
+{% include 'chefheader.html' %}
+
+<div class="container mt-5" style="max-width: 600px; padding: 30px; background: #ffffff; border-radius: 10px; box-shadow: 0px 4px 12px rgba(0,0,0,0.1);">
+    <h2 class="text-center mb-4" style="color: #333; font-weight: bold;">🚛 Assign Delivery Boy</h2>
+
+    {% if assignment.delivery_boy %}
+        <div class="alert alert-success text-center">
+            <b>🚛 Assigned Delivery Boy:</b> {{ assignment.delivery_boy.full_name }}<br>
+            <b>📌 Pickup Status:</b> <span class="badge bg-primary">{{ assignment.status|title }}</span>
+        </div>
+    {% else %}
+        <div class="alert alert-warning text-center">⚠️ No delivery boy assigned yet.</div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+            <label class="form-label"><b>Schedule ID:</b></label>
+            <input type="text" class="form-control" value="{{ schedule.id }}" disabled>
+            <input type="hidden" name="schedule_id" value="{{ schedule.id }}">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label"><b>Customer Name:</b></label>
+            <input type="text" class="form-control" value="{{ schedule.customer.name }}" disabled>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label"><b>Select Delivery Boy:</b></label>
+            <select class="form-control" name="delivery_boy_id" required>
+                <option value="" disabled selected>Choose a delivery boy</option>
+                {% for delivery_boy in delivery_boys %}
+                <option value="{{ delivery_boy.id }}" {% if assignment.delivery_boy.id == delivery_boy.id %}selected{% endif %}>
+                    {{ delivery_boy.full_name }} - {{ delivery_boy.phone_number }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label"><b>Select Status:</b></label>
+            <select class="form-control" name="status" required>
+                <option value="pending" {% if assignment.status == "pending" %}selected{% endif %}>Pending</option>
+                <option value="approved" {% if assignment.status == "approved" %}selected{% endif %}>Approved</option>
+                <option value="completed" {% if assignment.status == "completed" %}selected{% endif %}>Completed</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-success w-100">✔ Assign / Update Delivery Boy</button>
+    </form>
+</div>
+
+{% include 'cheffooter.html' %}

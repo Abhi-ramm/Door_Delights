@@ -1,0 +1,77 @@
+{% include 'adminheader.html' %}
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: #f8f9fa;
+        padding: 20px;
+        text-align: center;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: auto;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    th, td {
+        padding: 12px;
+        border: 1px solid #ddd;
+        text-align: left;
+    }
+
+    th {
+        background: black;
+        color: white;
+    }
+
+    img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+</style>
+
+<body>
+<div class="container">
+    <h2>Approved HomeChefs</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Photo</th>
+                <th>Full Name</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Aadhaar</th>
+                <th>Dishes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for chef in homechefs %}
+            <tr>
+                <td><img src="{{ chef.photo.url }}" alt="Chef Photo"></td>
+                <td>{{ chef.full_name }}</td>
+                <td>{{ chef.phone_number }}</td>
+                <td>{{ chef.email }}</td>
+                <td>{{ chef.aadhaar_number }}</td>
+                <td>{{ chef.dish }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">No approved HomeChefs yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% include 'adminfooter.html' %}
+</body>
